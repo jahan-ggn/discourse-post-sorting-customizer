@@ -1,0 +1,21 @@
+.post-sorting-buttons-widget {
+  float: right;
+  margin-right: 21%;
+  button {
+    margin: 10px 0px 10px 0px;
+    font-size: 16px;
+    border: 1px solid;
+  }
+
+  button:hover {
+    background-color: #f7cdc2;
+    color: #f4511e;
+  }
+
+  .selected {
+    background-color: #f4511e;
+    color: #ffffff;
+    pointer-events: none;
+    border: 1px solid #000000;
+  }
+}

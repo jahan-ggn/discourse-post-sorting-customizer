@@ -1,0 +1,6 @@
+en:
+  js:
+    post_sorting_buttons:
+      active: "Active"
+      oldest: "Oldest"
+      likes: "Likes"
