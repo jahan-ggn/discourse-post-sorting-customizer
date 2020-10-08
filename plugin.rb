@@ -31,7 +31,7 @@ after_initialize do
       sort_by = user ? user.custom_fields['sort_order'] : ::RequestStore.store[:post_tab]
       return if sort_by.nil?
       @posts = @posts.reorder('')
-      first_post = @posts.first
+      first_post = @posts.where(id: @posts.first.id)
       remaining_posts = @posts.where.not(id: @posts.first.id)
       case sort_by
       when "likes"
