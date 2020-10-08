@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# name: discourse-post-sorting-customizer-enabled
+# name: discourse-post-sorting-customizer
 # about: sorting posts based on given parameters
 # version: 0.1
 # authors: Jahan Gagan
