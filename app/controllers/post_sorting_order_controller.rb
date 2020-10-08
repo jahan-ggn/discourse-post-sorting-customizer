@@ -9,7 +9,7 @@ class DiscoursePostSortingCustomizer::PostSortingOrderController < ::Application
       user.save_custom_fields(true)
       MessageBus.publish('/post-sort-update', data, user_ids: [user.id])
     else
-      MessageBus.publish('/post-sort-update', data)
+      MessageBus.publish('/post-sort-update', data, user_ids: [])
     end
     render json: MultiJson.dump(success_json)
   end

@@ -32,12 +32,12 @@ const postSortingOrder = api => {
       const user = api.getCurrentUser();
       let highlighted;
       if (user && user.post_tab) {
-        highlighted = user.post_sort_order;
+        highlighted = user.post_tab;
       } else {
         highlighted = cookie("post_tab");
       }
       MessageBus.subscribe("/post-sort-update", function(data) {
-        user.post_sort_order = data.post_tab;
+        user.post_tab = data.post_tab;
       });
       buttons.push(
         this.attach("flat-button", {
