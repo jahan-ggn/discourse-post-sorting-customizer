@@ -15,7 +15,7 @@ gem 'request_store', '1.5.0', require: true
 
 after_initialize do
   add_to_serializer(:basic_user, :post_tab) do
-    user.custom_fields['sort_order']
+    user.custom_fields['post_tab']
   end
 
   module ::DiscoursePostSortingCustomizer
@@ -28,7 +28,10 @@ after_initialize do
   module TopicViewCustomExtension
     def initialize(topic_or_topic_id, user = nil, options = {})
       super
-      sort_by = user ? user.custom_fields['sort_order'] : ::RequestStore.store[:post_tab]
+      sort_by = user ? user.custom_fields['post_tab'] : ::RequestStore.store[:post_tab]
+      p "uffff"
+      p sort_by
+      p "uffff"
       return if sort_by.nil?
       @posts = @posts.reorder('')
       first_post = @posts.where(id: @posts.first.id)
@@ -47,7 +50,9 @@ after_initialize do
 
   module ::TopicsControllerExtension
     def show
-      ::RequestStore.store[:post_tab] = cookies[:post_tab]
+      p 'topic controller'
+      p params
+      ::RequestStore.store[:post_tab] = params[:post_tab]
       super
     end
   end
@@ -55,7 +60,7 @@ after_initialize do
 
   require File.expand_path('../app/controllers/post_sorting_order_controller.rb', __FILE__)
   DiscoursePostSortingCustomizer::Engine.routes.draw do
-    post '/post-tab/' => 'post_sorting_order#sortby'
+    get '/post-tab/' => 'post_sorting_order#sortby'
   end
 
   Discourse::Application.routes.append do

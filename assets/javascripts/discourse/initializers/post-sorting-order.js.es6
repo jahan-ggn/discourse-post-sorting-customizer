@@ -1,8 +1,6 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { h } from "virtual-dom";
 import { ajax } from "discourse/lib/ajax";
-import DiscourseURL from "discourse/lib/url";
-import MessageBus from "message-bus-client";
 import cookie from "discourse/lib/cookie";
 
 export default {
@@ -36,9 +34,11 @@ const postSortingOrder = api => {
       } else {
         highlighted = cookie("post_tab");
       }
-      MessageBus.subscribe("/post-sort-update", function(data) {
-        user.post_tab = data.post_tab;
-      });
+
+      // MessageBus.subscribe("/post-sort-update", function(data) {
+      //   user.post_tab = data.post_tab;
+      // });
+
       buttons.push(
         this.attach("flat-button", {
           action: "sortByActive",
@@ -66,17 +66,21 @@ const postSortingOrder = api => {
     },
 
     sortBy(post_tab) {
-      const topicUrl = this.attrs.topicUrl;
+      let topicController = api._lookupContainer("controller:topic");
       const user = api.getCurrentUser();
       if (!user) {
         cookie("post_tab", post_tab);
+        debugger;
+        topicController.set("post_tab", post_tab);
+      } else {
+        ajax("/post-tab", {
+          type: "GET",
+          data: { post_tab: post_tab }
+        }).then(() => {
+          topicController.set("post_tab", post_tab);
+          user.post_tab = post_tab;
+        });
       }
-      ajax("/post-tab", {
-        type: "POST",
-        data: { post_tab: post_tab }
-      }).then(() => {
-        DiscourseURL.routeTo(topicUrl);
-      });
     },
 
     sortByActive() {
@@ -89,6 +93,19 @@ const postSortingOrder = api => {
 
     sortByLikes() {
       this.sortBy("likes");
+    }
+  });
+
+  api.modifyClass("controller:topic", {
+    queryParams: ["filter", "username_filters", "post_tab"],
+    post_tab: "oldest"
+  });
+
+  api.modifyClass("route:topic", {
+    queryParams: {
+      filter: { replace: true },
+      username_filters: { replace: true },
+      post_tab: { refreshModel: true }
     }
   });
 };
