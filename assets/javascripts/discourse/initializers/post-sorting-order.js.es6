@@ -35,9 +35,9 @@ const postSortingOrder = api => {
         highlighted = cookie("post_tab");
       }
 
-      // MessageBus.subscribe("/post-sort-update", function(data) {
-      //   user.post_tab = data.post_tab;
-      // });
+      if (highlighted == null) {
+        highlighted = "oldest";
+      }
 
       buttons.push(
         this.attach("flat-button", {
@@ -96,22 +96,21 @@ const postSortingOrder = api => {
   });
 
   api.modifyClass("controller:topic", {
-    queryParams: ["filter", "username_filters", "post_tab"],
-    post_tab: "oldest"
+    queryParams: ["filter", "username_filters", "post_tab"]
   });
 
   api.modifyClass("route:topic", {
     queryParams: {
       filter: { replace: true },
       username_filters: { replace: true },
-      post_tab: { refreshModel: true }
+      post_tab: { refreshModel: true, replace: true }
     }
   });
 
   api.modifyClass("route:topic-from-params", {
     model(params) {
-      params.post_tab = this.paramsFor('topic').post_tab || cookie('post_tab');
+      params.post_tab = this.paramsFor("topic").post_tab || cookie("post_tab");
       return this._super(...arguments);
     }
-  })
+  });
 };

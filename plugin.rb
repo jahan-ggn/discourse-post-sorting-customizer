@@ -29,9 +29,6 @@ after_initialize do
     def initialize(topic_or_topic_id, user = nil, options = {})
       super
       sort_by = user ? user.custom_fields['post_tab'] : ::RequestStore.store[:post_tab]
-      p "uffff"
-      p sort_by
-      p "uffff"
       return if sort_by.nil?
       @posts = @posts.reorder('')
       first_post = @posts.where(id: @posts.first.id)
@@ -50,8 +47,7 @@ after_initialize do
 
   module ::TopicsControllerExtension
     def show
-      p 'topic controller'
-      p params
+      p params[:post_tab]
       ::RequestStore.store[:post_tab] = params[:post_tab]
       super
     end
