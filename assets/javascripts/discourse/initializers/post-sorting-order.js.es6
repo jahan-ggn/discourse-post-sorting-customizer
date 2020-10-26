@@ -70,7 +70,6 @@ const postSortingOrder = api => {
       const user = api.getCurrentUser();
       if (!user) {
         cookie("post_tab", post_tab);
-        debugger;
         topicController.set("post_tab", post_tab);
       } else {
         ajax("/post-tab", {
@@ -108,4 +107,11 @@ const postSortingOrder = api => {
       post_tab: { refreshModel: true }
     }
   });
+
+  api.modifyClass("route:topic-from-params", {
+    model(params) {
+      params.post_tab = this.paramsFor('topic').post_tab || cookie('post_tab');
+      return this._super(...arguments);
+    }
+  })
 };
