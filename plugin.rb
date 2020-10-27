@@ -32,14 +32,28 @@ after_initialize do
       return if sort_by.nil?
       @posts = @posts.reorder('')
       first_post = @posts.where(id: @posts.first.id)
-      remaining_posts = @posts.where.not(id: @posts.first.id)
-      case sort_by
-      when "likes"
-        @posts = first_post + remaining_posts.order(like_count: :desc)
-      when "active"
-        @posts = first_post + remaining_posts.order(created_at: :desc)
+      if SiteSetting.respond_to?(:solved_enabled) && SiteSetting.solved_enabled
+        solution_post_id = TopicCustomField.where(topic_id: topic_or_topic_id).where(name: "accepted_answer_post_id").pluck(:value).join.to_i
+        solution_post = @posts.where(id: solution_post_id)
+        remaining_posts = @posts.where.not(id: @posts.first.id).where.not(id: solution_post_id)
+        case sort_by
+        when "likes"
+          @posts = first_post + solution_post + remaining_posts.order(like_count: :desc)
+        when "active"
+          @posts = first_post + solution_post + remaining_posts.order(created_at: :desc)
+        else
+          @posts = first_post + solution_post + remaining_posts.order(:created_at)
+        end
       else
-        @posts = first_post + remaining_posts.order(:created_at)
+        remaining_posts = @posts.where.not(id: @posts.first.id)
+        case sort_by
+        when "likes"
+          @posts = first_post + remaining_posts.order(like_count: :desc)
+        when "active"
+          @posts = first_post + remaining_posts.order(created_at: :desc)
+        else
+          @posts = first_post + remaining_posts.order(:created_at)
+        end
       end
     end
   end
